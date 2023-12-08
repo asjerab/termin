@@ -14,7 +14,7 @@ session_start();
     <link rel="stylesheet" href="stylesheet.css"> 
 
     <!-- Tittel på nettsiden -->
-    <title>Login</title>
+    <title>Home Page</title>
 </head>
 
 <body>
