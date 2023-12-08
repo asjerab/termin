@@ -7,14 +7,11 @@ session_start();
 <html lang="en">
 
 <head>
-    <!-- Metainformasjon -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Lenker til eksterne ressurser som CSS-filer, Google Fonts og Font Awesome ikonbibliotek -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit&display=swap" rel="stylesheet"> <!-- Google Fonts for skrifttyper -->
-    <script src="https://kit.fontawesome.com/ced2e054c6.js" crossorigin="anonymous"></script> <!-- Font Awesome ikonbibliotek -->
-    <link rel="stylesheet" href="stylesheet.css"> <!-- Eksternt stilark for utseendet -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit&display=swap" rel="stylesheet"> 
+    <script src="https://kit.fontawesome.com/ced2e054c6.js" crossorigin="anonymous"></script> 
+    <link rel="stylesheet" href="stylesheet.css"> 
 
     <!-- Tittel på nettsiden -->
     <title>Login</title>
