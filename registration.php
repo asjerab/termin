@@ -47,7 +47,7 @@
     if (isset($_POST['submit'])) {
         //Gjøre om POST-data fra formen til variabler
         $Username = $_POST['brukernavn'];
-        $Password = md5($_POST['passord']);
+        $Password = $_POST['passord'];
 
         //Koble til databasen 
         $dbc = mysqli_connect('localhost', 'root', 'admin', 'chattapp')

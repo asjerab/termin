@@ -1,150 +1,107 @@
 <?php
+// Starter en PHP-sesjon
 session_start();
-
-
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+    <!-- Metainformasjon -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit&display=swap" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/ced2e054c6.js" crossorigin="anonymous"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit&display=swap" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/ced2e054c6.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="stylesheet.css">
+
+    <!-- Lenker til eksterne ressurser som CSS-filer, Google Fonts og Font Awesome ikonbibliotek -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit&display=swap" rel="stylesheet"> <!-- Google Fonts for skrifttyper -->
+    <script src="https://kit.fontawesome.com/ced2e054c6.js" crossorigin="anonymous"></script> <!-- Font Awesome ikonbibliotek -->
+    <link rel="stylesheet" href="stylesheet.css"> <!-- Eksternt stilark for utseendet -->
+
+    <!-- Tittel på nettsiden -->
     <title>Login</title>
 </head>
 
 <body>
-
-
-
     <?php
-
-    // Check if user is logged in
-    if(!isset($_SESSION['brukernavn'])) {
-        // Redirect the user to the login page or handle the situation accordingly
+    // Sjekker om brukeren er logget inn
+    if (!isset($_SESSION['brukernavn'])) {
+        // Omdirigerer brukeren til innloggingssiden eller håndterer situasjonen på passende vis
         header('Location: login.php');
         exit();
     }
 
-    //Denne koden kobles til databasen
+    // Kobler til databasen
     $dbc = mysqli_connect('localhost', 'root', 'admin', 'chattapp')
-        or die('Error connecting to Mysql server');
+        or die('Error connecting to MySQL server');
 
-    // Fetch posts from the database
-    $query = "SELECT * FROM posts ORDER BY datePosted DESC"; // Change this query as needed
+    // Henter poster fra databasen
+    $query = "SELECT * FROM posts ORDER BY datePosted DESC"; // Endre denne spørringen etter behov
     $result = mysqli_query($dbc, $query) or die('Error fetching posts');
 
-// Display posts in the specified format
-while ($row = mysqli_fetch_assoc($result)) {
-    echo '<div class="post-flex">
-        <div class="post-wrapper">
-            <div class="nav-wrapper">';
-    
-    // Display the username associated with the post
-    echo htmlspecialchars($row['brukernavn']);
-
-    echo '<p>Delete</p>
+    // Viser poster i angitt format
+    while ($row = mysqli_fetch_assoc($result)) {
+        echo '<div class="post-flex">
+            <div class="post-wrapper">
+                <div class="nav-wrapper">';
+        
+        // Viser brukernavnet tilknyttet posten
+        echo htmlspecialchars($row['brukernavn']);
+        if ($row['brukernavn'] == $_SESSION['brukernavn']) {
+            echo '<p>Delete</p>';
+        }
+        echo '</div>
+                <div class="text-wrapper">
+                    <p>' . htmlspecialchars($row['post']) . '</p>
+                </div>
+                <div class="interaction-wrapper">
+                    <i class="fa-solid fa-heart"></i>
+                    <span>' . date('M d, Y - H:i', strtotime($row['datePosted'])) . '</span>
+                </div>
             </div>
-            <div class="text-wrapper">
-                <p>' . htmlspecialchars($row['post']) . '</p>
-            </div>
-            <div class="interaction-wrapper">
-                <i class="fa-solid fa-heart"></i>
-                <span>' . date('M d, Y - H:i', strtotime($row['datePosted'])) . '</span>
-            </div>
-        </div>
-    </div>';
-    
-    echo '<hr class="br-post">';
-}
+        </div>';
+    }
 
-
-    // Check if the form is submitted
-    if($_SERVER['REQUEST_METHOD'] === 'POST') {
-        // Get the post content from the textarea
+    // Sjekker om skjemaet er sendt
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // Henter innholdet fra textarea
         $postContent = $_POST['postContent'];
 
-        if(empty($postContent)) {
+        if (empty($postContent)) {
             $errors[] = 'The post content cannot be empty';
         } else {
-            // Get the current date and time formatted as 'YYYY-MM-DD HH:MM:SS'
+            // Henter gjeldende dato og tid på formatet 'YYYY-MM-DD HH:MM:SS'
             $currentDateTime = date('Y-m-d H:i:s');
 
-            // Get the logged-in user's username from the session
+            // Henter brukernavnet til innlogget bruker fra sesjonen
             $loggedInUser = $_SESSION['brukernavn'];
 
-            // Insert the post into the database with the current date, time, and associated username
+            // Setter inn posten i databasen med gjeldende dato, tid og tilknyttet brukernavn
             $query = "INSERT INTO posts (post, likes, datePosted, brukernavn) 
-                  VALUES ('$postContent', 0, '$currentDateTime', '$loggedInUser')";
+                      VALUES ('$postContent', 0, '$currentDateTime', '$loggedInUser')";
             mysqli_query($dbc, $query) or die('Error inserting post into the database');
 
-            // Redirect to the home page or display a success message
+            // Omdirigerer til hjemmesiden eller viser en suksessmelding
             header('Location: homePage.php');
             exit();
         }
     }
-
     ?>
 
-
-
-
-    <?php
-
-    // Check if the form is submitted
-    if($_SERVER['REQUEST_METHOD'] === 'POST') {
-        // Get the post content from the textarea
-        $postContent = $_POST['postContent'];
-
-        if(empty($postContent)) {
-            $errors[] = 'The post content cannot be empty';
-        }
-
-        // Get the current date and time formatted as 'YYYY-MM-DD HH:MM:SS'
-        $currentDateTime = date('Y-m-d H:i:s');
-
-        // Insert the post into the database with the current date and time
-        $query = "INSERT INTO posts (post, likes, datePosted) VALUES ('$postContent', 0, '$currentDateTime')";
-        mysqli_query($dbc, $query) or die('Error inserting post into the database');
-
-        // Redirect to the home page or display a success message
-        header('Location: homePage.php');
-        exit();
-    }
-    ?>
-
+    <!-- Skjema for å legge til en ny post -->
     <form action="homePage.php" method="POST">
         <div class="post-box" id="postBox">
-            <textarea name="postContent" id="postTextArea" cols="30" rows="10"
-                placeholder="Write your post here."></textarea>
+            <textarea name="postContent" id="postTextArea" cols="30" rows="10" placeholder="Write your post here."></textarea>
             <button type="submit" class="post-button">Post</button>
         </div>
     </form>
 
-    <!-- <div>
-        <button class="closePostBox">X</button>
-    </div> -->
-
-
-
-
-
+    <!-- Meny med ulike ikoner -->
     <div class="menu">
         <i class="fa-regular fa-user"></i>
         <i class="fa-solid fa-plus" id="showPostBox"></i>
         <a href="logout.php"><i class="fa-solid fa-right-from-bracket"></i></a>
     </div>
 
-
+    <!-- Javascript-fil -->
     <script src="./script.js"></script>
 </body>
 
